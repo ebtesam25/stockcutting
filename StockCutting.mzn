@@ -43,11 +43,10 @@ constraint forall(i in orderNo)(
               sum(j in rollNo)(cut[j,i])== orderQuantity[i]
             );
 
-%var int: waste = sum([cut[i,j] | i in rollNo, j in orderNo where isUsed[i] = 1]);
-
 solve minimize rollsUsed; % minimize the number of rolls used
 
 output
-["Total length needed: " ++ show(totalOrders) ++ " Units\n" ++  show(orderLength) ++ "\n"]  ++
+["Total Waste: " ++ show (sum([cut[i,j]| i in rollNo, j in orderNo where fix(isUsed[i]) == 1]))] ++
+["\nTotal length needed: " ++ show(totalOrders) ++ " Units\n" ++  show(orderLength) ++ "\n"]  ++
 [" "++show(cut[i,j]) ++ if j == nOrders then " ---Roll "++show(i)++"\t"++ show(isUsed[i]) ++"\n" else "  " endif | i in rollNo, j in orderNo where fix(isUsed[i]) == 1]++
 ["\nRolls Needed="]++[show(rollsUsed)]++[" Unused="++show(unused)]
